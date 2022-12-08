@@ -82,14 +82,14 @@ class ModelALS(AbstractModel):
 
 class BIVAE(AbstractModel):
     def __init__(
-            self,
-            latent_dim=50,
-            act_fn="tanh",
-            likelihood="pois",
-            n_epochs=50,
-            batch_size=128,
-            lr=0.001,
-            random_seed=42,
+        self,
+        latent_dim=50,
+        act_fn="tanh",
+        likelihood="pois",
+        n_epochs=50,
+        batch_size=128,
+        lr=0.001,
+        random_seed=42,
     ):
         self.model = cornac.models.BiVAECF(
             k=latent_dim,
@@ -127,7 +127,10 @@ class BIVAE(AbstractModel):
 
 class MostPopular(AbstractModel):
     def fit(self, train, seed=42):
-        self.model = train[self.item_col].value_counts() / train[self.item_col].value_counts().max()
+        self.model = (
+            train[self.item_col].value_counts()
+            / train[self.item_col].value_counts().max()
+        )
         self.train = train
 
     def transform(self, top_k_pred):
@@ -190,7 +193,7 @@ def _genre_maper(other_genres):
 def _genre_maper2():
     def maper(x: str):
         if type(x) == str:
-            x = x + '_' if "|" not in x else x
+            x = x + "_" if "|" not in x else x
             x = x.split("|")[0]
         return x
 
@@ -198,41 +201,29 @@ def _genre_maper2():
 
 
 def evaluate(
-        train,
-        test,
-        preds,
-        top_k,
-        user_col=USER_COL,
-        item_col=ITEM_COL,
-        rating_col=RATING_COL,
-        pred_col=PREDICTION_COL,
-        divers_col=GENRE_COL,
+    train,
+    test,
+    preds,
+    top_k,
+    user_col=USER_COL,
+    item_col=ITEM_COL,
+    rating_col=RATING_COL,
+    pred_col=PREDICTION_COL,
+    divers_col=GENRE_COL,
 ):
     diversity = (
-        preds
-        .dropna()
+        preds.dropna()
         .assign(genre=preds[divers_col].map(_genre_maper2()))
         .groupby(user_col)["genre"]
         .nunique()
         .median()
     )
     coverage = preds[item_col].nunique() / train[item_col].nunique()
-    preds = preds.sort_values([user_col, pred_col], ascending=False).groupby(user_col).head(top_k)
-
-    # other_genres = preds["genres"].dropna().map(lambda x: str(x).split("|")[0]).value_counts()[9:].index
-
-    genre_maper = lambda x: x.split("|")[0] if type(x) == str else x
-    # diversity = preds.groupby(user_col)[divers_col].apply(lambda x: len(set('|'.join(x.astype(str)).split("|")))).median()
-    # (
-    #     preds
-    #     .assign(genre=preds[divers_col].map(_genre_maper(other_genres)))
-    #     .dropna()
-    #     .groupby(user_col)["genre"]
-    #     .nunique()
-    #     .median()
-    # )
-    # pd.Series(chain(*preds.genres.dropna().map(lambda x: x.split("|")).tolist())).value_counts()
-    # diversity = preds.groupby(user_col)[divers_col].nunique().median()
+    preds = (
+        preds.sort_values([user_col, pred_col], ascending=False)
+        .groupby(user_col)
+        .head(top_k)
+    )
 
     spark_metrics = SparkRankingEvaluation(
         spark.createDataFrame(test),

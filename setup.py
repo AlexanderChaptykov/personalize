@@ -5,4 +5,4 @@ PREDICTION_COL = "prediction"
 GENRE_COL = "genres"
 
 TOP_K_METRICS = 20
-TOP_K_PRED = 20
+TOP_K_PRED = 200
