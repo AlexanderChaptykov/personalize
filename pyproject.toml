@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "personalize"
+version = "0.1.0"
+description = "Comparing recommender models"
+authors = ["AlexanderChaptykov <123diz321@gmail.com>"]
+
+[tool.poetry.dependencies]
+python = "3.9.0"
+recommenders = "^1.1.1"
+notebook = "^6.5.2"
+pyspark = ">=2.4.5,<3.3.0"
+
+[tool.poetry.dev-dependencies]
+
+[build-system]
+requires = ["poetry-core>=1.0.0"]
+build-backend = "poetry.core.masonry.api"

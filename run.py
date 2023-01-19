@@ -12,7 +12,7 @@ def main(out_folder="outputs"):
     df = pd.read_csv("data/personalize.zip", compression="zip").iloc[:, :3]
 
     genres = (
-        pd.read_csv("data/genres.csv").rename({"movieId": ITEM_COL}, axis=1).dropna()
+        pd.read_csv("data/genres.zip").rename({"movieId": ITEM_COL}, axis=1).dropna()
     )
 
     train, test = train_test_split(df, test_size=None, train_size=0.75, random_state=42)
