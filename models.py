@@ -10,7 +10,7 @@ from setup import USER_COL, ITEM_COL, RATING_COL, PREDICTION_COL, GENRE_COL
 
 spark = SparkSession.builder.getOrCreate()
 spark.conf.set("spark.sql.analyzer.failAmbiguousSelfJoin", "false")
-
+# comment
 
 class AbstractModel:
     user_col = USER_COL
